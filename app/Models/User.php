@@ -19,8 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'nom_entreprise', // Ajouté
         'email',
         'password',
+        'role', // Ajouté
     ];
 
     /**
@@ -44,5 +46,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Méthodes de vérification de rôle
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isEntrepreneur()
+    {
+        return $this->role === 'entrepreneur_approuve';
+    }
+
+    public function isEnAttente()
+    {
+        return $this->role === 'entrepreneur_en_attente';
+    }
+
+    public function isParticipant()
+    {
+        return $this->role === 'participant';
+    }
+
+    public function can($ability, $arguments = [])
+    {
+        if ($ability === 'admin') {
+            return $this->role === 'admin';
+        }
+        
+        return false;
     }
 }
