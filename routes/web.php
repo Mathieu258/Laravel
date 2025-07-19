@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\StandController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,13 +26,15 @@ Route::middleware(['auth'])->group(function () {
         }
         return view('admin.dashboard');
     })->name('admin.dashboard');
-    
+
     Route::get('/test-role', function () {
         if (auth()->user()->role !== 'admin') {
             abort(403, 'Accès refusé.');
         }
         return 'OK';
     });
+
+    Route::resource('stands', StandController::class);
 });
 
 require __DIR__.'/auth.php';
