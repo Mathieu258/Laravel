@@ -22,13 +22,8 @@ class CommandeController extends Controller
      */
     public function index(Request $request)
     {
-        // Vérifier que l'utilisateur est connecté et a les bonnes permissions
         if (!auth()->check()) {
             abort(401, 'Vous devez être connecté.');
-        }
-        
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'entrepreneur_approuve') {
-            abort(403, 'Accès refusé.');
         }
 
         $query = Commande::with(['stand', 'user']);
@@ -38,8 +33,8 @@ class CommandeController extends Controller
             $query->where('statut', $request->statut);
         }
 
-        // Filtrage par stand (pour les entrepreneurs)
-        if (auth()->user()->role === 'entrepreneur_approuve') {
+        // Filtrage par stand (pour les entrepreneurs approuvés)
+        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
             $query->whereHas('stand', function ($q) {
                 $q->where('user_id', auth()->id());
             });
@@ -156,7 +151,7 @@ class CommandeController extends Controller
     public function edit(Commande $commande)
     {
         // Vérifier les permissions
-        if (auth()->user()->role === 'entrepreneur_approuve') {
+        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
             if ($commande->stand->user_id !== auth()->id()) {
                 abort(403, 'Accès refusé.');
             }
@@ -178,7 +173,7 @@ class CommandeController extends Controller
     public function update(Request $request, Commande $commande)
     {
         // Vérifier les permissions
-        if (auth()->user()->role === 'entrepreneur_approuve') {
+        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
             if ($commande->stand->user_id !== auth()->id()) {
                 abort(403, 'Accès refusé.');
             }
@@ -223,7 +218,7 @@ class CommandeController extends Controller
     public function destroy(Commande $commande)
     {
         // Vérifier les permissions
-        if (auth()->user()->role === 'entrepreneur_approuve') {
+        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
             if ($commande->stand->user_id !== auth()->id()) {
                 abort(403, 'Accès refusé.');
             }

@@ -13,16 +13,16 @@
                     <p class="mb-8 text-gray-600 dark:text-gray-400">
                         @if(Auth::user()->role === 'admin')
                             Vous êtes connecté en tant qu'administrateur.
-                        @elseif(Auth::user()->role === 'entrepreneur_approuve')
+                        @elseif(Auth::user()->role === 'entrepreneur' && Auth::user()->statut === 'approuve')
                             Vous êtes connecté en tant qu'entrepreneur.
-                        @elseif(Auth::user()->role === 'entrepreneur_en_attente')
+                        @elseif(Auth::user()->role === 'entrepreneur' && Auth::user()->statut === 'en_attente')
                             Votre compte est en attente d'approbation.
                         @else
                             Vous êtes connecté.
                         @endif
                     </p>
                     
-                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'entrepreneur_approuve')
+                    @if(Auth::user()->role === 'admin' || (Auth::user()->role === 'entrepreneur' && Auth::user()->statut === 'approuve'))
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <!-- Gestion des Stands -->
                             <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700">
@@ -57,7 +57,7 @@
                                 </a>
                             </div>
                         </div>
-                    @elseif(Auth::user()->role === 'entrepreneur_en_attente')
+                    @elseif(Auth::user()->role === 'entrepreneur' && Auth::user()->statut === 'en_attente')
                         <div class="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-lg border border-yellow-200 dark:border-yellow-700">
                             <h3 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-3">Compte en attente</h3>
                             <p class="text-yellow-600 dark:text-yellow-300">

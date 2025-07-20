@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// (routes admin protégées par 'role', 'roleadmin', ou 'roleadmin2' supprimées ou commentées)
+// (Aucune référence à CheckRole ou IsAdminMiddleware n'est présente, donc rien à supprimer ici)
 
 Route::get('/test-role', function () {
     if (auth()->user()->role !== 'admin') {
@@ -58,5 +58,20 @@ Route::get('/admin', function () {
     }
     return view('admin.dashboard');
 })->middleware('auth')->name('admin.dashboard');
+
+// Gestion des demandes d'entrepreneurs par l'admin
+Route::get('/admin/demandes', function () {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminUserController::class)->index();
+})->middleware('auth')->name('admin.demandes');
+
+Route::post('/admin/demandes/{id}/statut', function ($id, \Illuminate\Http\Request $request) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminUserController::class)->updateStatut($request, $id);
+})->middleware('auth')->name('admin.demandes.update');
 
 require __DIR__.'/auth.php';
