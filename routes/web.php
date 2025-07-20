@@ -22,18 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-
-    // Ajoute ici toutes les routes d'administration (gestion utilisateurs, approbation, etc.)
-    // Exemples :
-    // Route::get('/admin/utilisateurs', [AdminController::class, 'users'])->name('admin.users');
-    // Route::post('/admin/approve/{user}', [AdminController::class, 'approve'])->name('admin.approve');
-});
-
-// Les autres routes (stands, produits, commandes, etc.) restent protégées par 'auth' ou par des vérifications dans les contrôleurs.
+// (routes admin protégées par 'role', 'roleadmin', ou 'roleadmin2' supprimées ou commentées)
 
 Route::get('/test-role', function () {
     if (auth()->user()->role !== 'admin') {
@@ -61,5 +50,13 @@ Route::patch('/commandes/{commande}/statut', [CommandeController::class, 'update
 Route::get('/api/stands/{stand}/produits', function ($standId, Request $request) {
     return \App\Models\Produit::where('stand_id', $standId)->get();
 });
+
+// Routes d'administration protégées par le middleware 'isadmin'
+Route::get('/admin', function () {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return view('admin.dashboard');
+})->middleware('auth')->name('admin.dashboard');
 
 require __DIR__.'/auth.php';
