@@ -74,4 +74,37 @@ Route::post('/admin/demandes/{id}/statut', function ($id, \Illuminate\Http\Reque
     return app(\App\Http\Controllers\AdminUserController::class)->updateStatut($request, $id);
 })->middleware('auth')->name('admin.demandes.update');
 
+// Routes publiques (accessibles à tous)
+Route::prefix('public')->group(function () {
+    // Liste des stands approuvés
+    Route::get('/stands', [App\Http\Controllers\PublicController::class, 'index'])->name('public.stands.index');
+    
+    // Détails d'un stand
+    Route::get('/stands/{id}', [App\Http\Controllers\PublicController::class, 'show'])->name('public.stands.show');
+    
+    // Recherche de produits
+    Route::get('/produits/search', [App\Http\Controllers\PublicController::class, 'searchProduits'])->name('public.produits.search');
+    
+    // Statistiques publiques
+    Route::get('/stats', [App\Http\Controllers\PublicController::class, 'stats'])->name('public.stats');
+});
+
+// Routes du panier
+Route::prefix('cart')->group(function () {
+    Route::get('/', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::post('/add', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+    Route::put('/update', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+    Route::delete('/remove/{produitId}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
+    Route::get('/count', [App\Http\Controllers\CartController::class, 'count'])->name('cart.count');
+});
+
+// Routes des commandes publiques
+Route::prefix('orders')->group(function () {
+    Route::get('/checkout', [App\Http\Controllers\PublicOrderController::class, 'checkout'])->name('orders.checkout');
+    Route::post('/store', [App\Http\Controllers\PublicOrderController::class, 'store'])->name('orders.store');
+    Route::get('/history', [App\Http\Controllers\PublicOrderController::class, 'history'])->name('orders.history');
+    Route::get('/{id}', [App\Http\Controllers\PublicOrderController::class, 'show'])->name('orders.show');
+});
+
 require __DIR__.'/auth.php';

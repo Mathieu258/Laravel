@@ -136,18 +136,14 @@
                                                         Approuver
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.demandes.update', $user->id) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <input type="hidden" name="statut" value="rejete">
-                                                    <button type="submit" 
-                                                            onclick="return confirm('Êtes-vous sûr de vouloir rejeter cette demande ?')"
-                                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
-                                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        Rejeter
-                                                    </button>
-                                                </form>
+                                                <button type="button" 
+                                                        onclick="showRejectModal({{ $user->id }})"
+                                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    Rejeter
+                                                </button>
                                             </div>
                                         @else
                                             <span class="text-gray-400">Aucune action disponible</span>
@@ -201,6 +197,80 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', filterTable);
     statusFilter.addEventListener('change', filterTable);
+});
+
+// Fonction pour afficher la modal de rejet
+function showRejectModal(userId) {
+    const modal = document.getElementById('rejectModal');
+    const form = document.getElementById('rejectForm');
+    const userIdInput = document.getElementById('userId');
+    
+    userIdInput.value = userId;
+    modal.classList.remove('hidden');
+}
+
+// Fonction pour fermer la modal
+function closeRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    modal.classList.add('hidden');
+    document.getElementById('motif').value = '';
+}
+</script>
+
+<!-- Modal pour le rejet avec motif -->
+<div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Rejeter la demande</h3>
+                <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="rejectForm" action="{{ route('admin.demandes.update', ':userId') }}" method="POST">
+                @csrf
+                <input type="hidden" name="statut" value="rejete">
+                <input type="hidden" id="userId" name="user_id" value="">
+                
+                <div class="mb-4">
+                    <label for="motif" class="block text-sm font-medium text-gray-700 mb-2">
+                        Motif du rejet (optionnel)
+                    </label>
+                    <textarea 
+                        id="motif" 
+                        name="motif" 
+                        rows="4" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                        placeholder="Expliquez brièvement pourquoi cette demande est rejetée..."></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button 
+                        type="button" 
+                        onclick="closeRejectModal()"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        Annuler
+                    </button>
+                    <button 
+                        type="submit"
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Confirmer le rejet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Mise à jour de l'action du formulaire avec l'ID utilisateur
+document.getElementById('rejectForm').addEventListener('submit', function(e) {
+    const userId = document.getElementById('userId').value;
+    const action = this.action.replace(':userId', userId);
+    this.action = action;
 });
 </script>
 @endsection 
