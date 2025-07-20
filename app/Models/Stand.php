@@ -19,4 +19,9 @@ class Stand extends Model
     {
         return $this->hasMany(Produit::class);
     }
+
+    public function commandes(): HasMany
+    {
+        return $this->hasMany(Commande::class);
+    }
 }

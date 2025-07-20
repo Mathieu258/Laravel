@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -46,6 +47,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relation avec les stands
+     */
+    public function stands(): HasMany
+    {
+        return $this->hasMany(Stand::class);
+    }
+
+    /**
+     * Relation avec les commandes
+     */
+    public function commandes(): HasMany
+    {
+        return $this->hasMany(Commande::class);
     }
 
     // Méthodes de vérification de rôle

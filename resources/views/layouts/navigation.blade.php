@@ -15,6 +15,20 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    
+                    @if(auth()->user()->role === 'admin' || auth()->user()->role === 'entrepreneur_approuve')
+                        <x-nav-link :href="route('stands.index')" :active="request()->routeIs('stands.*')">
+                            {{ __('Stands') }}
+                        </x-nav-link>
+                        
+                        <x-nav-link :href="route('produits.index')" :active="request()->routeIs('produits.*')">
+                            {{ __('Produits') }}
+                        </x-nav-link>
+                        
+                        <x-nav-link :href="route('commandes.index')" :active="request()->routeIs('commandes.*')">
+                            {{ __('Commandes') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +84,20 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            @if(auth()->user()->role === 'admin' || auth()->user()->role === 'entrepreneur_approuve')
+                <x-responsive-nav-link :href="route('stands.index')" :active="request()->routeIs('stands.*')">
+                    {{ __('Stands') }}
+                </x-responsive-nav-link>
+                
+                <x-responsive-nav-link :href="route('produits.index')" :active="request()->routeIs('produits.*')">
+                    {{ __('Produits') }}
+                </x-responsive-nav-link>
+                
+                <x-responsive-nav-link :href="route('commandes.index')" :active="request()->routeIs('commandes.*')">
+                    {{ __('Commandes') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
