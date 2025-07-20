@@ -14,7 +14,12 @@ class Commande extends Model
         'statut',
         'total_prix',
         'date_commande',
-        'notes'
+        'notes',
+        // Champs pour les commandes publiques
+        'nom_client',
+        'email_client',
+        'telephone_client',
+        'adresse_livraison'
     ];
 
     protected $casts = [
