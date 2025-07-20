@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StandController;
+use App\Http\Controllers\ProduitController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::resource('stands', StandController::class);
+    Route::resource('produits', ProduitController::class);
 });
 
 require __DIR__.'/auth.php';

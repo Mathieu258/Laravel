@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nom');
             $table->text('description')->nullable();
             $table->decimal('prix', 8, 2);
-            $table->string('image_url')->nullable();
+            $table->string('image')->nullable();
             $table->unsignedBigInteger('stand_id');
             $table->timestamps();
 
