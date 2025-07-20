@@ -7,6 +7,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="min-h-screen flex flex-col">
+        @include('layouts.navigation')
         <!-- Header -->
         @isset($header)
             <header class="bg-white shadow">

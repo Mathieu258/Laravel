@@ -14,27 +14,27 @@ class ProduitController extends Controller
         $this->middleware('auth');
     }
 
-    private function checkAdminRole()
-    {
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Accès refusé.');
-        }
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $this->checkAdminRole();
-        
         $query = Produit::with('stand');
+
+        // Si l'utilisateur est entrepreneur approuvé, il ne voit que les produits de ses stands
+        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
+            $query->whereHas('stand', function($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
 
         // Recherche par nom
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('nom', 'like', "%{$search}%")
+            $query->where(function($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         // Filtre par stand
@@ -53,8 +53,6 @@ class ProduitController extends Controller
      */
     public function create()
     {
-        $this->checkAdminRole();
-        
         $stands = Stand::all();
         return view('produits.create', compact('stands'));
     }
@@ -64,8 +62,6 @@ class ProduitController extends Controller
      */
     public function store(Request $request)
     {
-        $this->checkAdminRole();
-        
         $request->validate([
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -94,8 +90,6 @@ class ProduitController extends Controller
      */
     public function show(Produit $produit)
     {
-        $this->checkAdminRole();
-        
         return view('produits.show', compact('produit'));
     }
 
@@ -104,8 +98,6 @@ class ProduitController extends Controller
      */
     public function edit(Produit $produit)
     {
-        $this->checkAdminRole();
-        
         $stands = Stand::all();
         return view('produits.edit', compact('produit', 'stands'));
     }
@@ -115,8 +107,6 @@ class ProduitController extends Controller
      */
     public function update(Request $request, Produit $produit)
     {
-        $this->checkAdminRole();
-        
         $request->validate([
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -150,8 +140,6 @@ class ProduitController extends Controller
      */
     public function destroy(Produit $produit)
     {
-        $this->checkAdminRole();
-        
         $produit->delete();
 
         return redirect()->route('produits.index')
