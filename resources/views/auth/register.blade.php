@@ -39,6 +39,24 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Choix du rôle -->
+        <div class="mt-4">
+            <span class="block text-sm font-medium text-gray-700 mb-2">Je m'inscris en tant que :</span>
+            <div class="flex items-center space-x-6">
+                <label class="inline-flex items-center">
+                    <input type="radio" class="form-radio" name="role_inscription" value="entrepreneur" checked>
+                    <span class="ml-2">Entrepreneur</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" class="form-radio" name="role_inscription" value="participant">
+                    <span class="ml-2">Participant</span>
+                </label>
+            </div>
+            @error('role_inscription')
+                <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
