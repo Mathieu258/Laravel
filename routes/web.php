@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StandController;
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\AdminCommandeController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -73,6 +74,35 @@ Route::post('/admin/demandes/{id}/statut', function ($id, \Illuminate\Http\Reque
     }
     return app(\App\Http\Controllers\AdminUserController::class)->updateStatut($request, $id);
 })->middleware('auth')->name('admin.demandes.update');
+
+// Gestion des commandes par l'admin
+Route::get('/admin/commandes', function () {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->index(request());
+})->middleware('auth')->name('admin.commandes');
+
+Route::get('/admin/commandes/{commande}', function ($commande) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->show($commande);
+})->middleware('auth')->name('admin.commandes.show');
+
+Route::patch('/admin/commandes/{commande}/statut', function ($commande, \Illuminate\Http\Request $request) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->updateStatus($request, $commande);
+})->middleware('auth')->name('admin.commandes.update-status');
+
+Route::get('/admin/commandes/export', function (\Illuminate\Http\Request $request) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->export($request);
+})->middleware('auth')->name('admin.commandes.export');
 
 // Routes publiques (accessibles à tous)
 Route::prefix('public')->group(function () {

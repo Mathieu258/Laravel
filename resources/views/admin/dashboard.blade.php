@@ -59,7 +59,7 @@
                         <div class="bg-green-50 p-6 rounded-lg border border-green-200">
                             <h3 class="text-lg font-semibold text-green-800 mb-3">Gestion des Commandes</h3>
                             <p class="text-green-600 mb-4">Suivi et administration des commandes</p>
-                            <a href="{{ route('commandes.index') }}" 
+                            <a href="{{ route('admin.commandes') }}" 
                                class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded transition-colors duration-200"
                                style="background-color: #22c55e !important;">
                                 Gérer les Commandes
@@ -74,16 +74,18 @@
                             <div class="bg-white p-4 rounded-lg border border-gray-200">
                                 <h4 class="font-semibold text-gray-800 mb-2">Gestion des Utilisateurs</h4>
                                 <p class="text-sm text-gray-600 mb-3">Approuver les entrepreneurs, gérer les rôles</p>
-                                <span class="inline-block px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm">
-                                    À implémenter
-                                </span>
+                                <a href="{{ route('admin.demandes') }}" 
+                                   class="inline-flex items-center px-3 py-1 bg-blue-500 hover:bg-blue-700 text-white rounded text-sm transition-colors duration-200">
+                                    Gérer les Demandes
+                                </a>
                             </div>
                             <div class="bg-white p-4 rounded-lg border border-gray-200">
                                 <h4 class="font-semibold text-gray-800 mb-2">Statistiques Avancées</h4>
                                 <p class="text-sm text-gray-600 mb-3">Rapports détaillés et analyses</p>
-                                <span class="inline-block px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm">
-                                    À implémenter
-                                </span>
+                                <a href="{{ route('admin.commandes') }}" 
+                                   class="inline-flex items-center px-3 py-1 bg-green-500 hover:bg-green-700 text-white rounded text-sm transition-colors duration-200">
+                                    Voir les Statistiques
+                                </a>
                             </div>
                         </div>
                     </div>
