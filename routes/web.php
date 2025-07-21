@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StandController;
 use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\AdminCommandeController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -39,9 +40,18 @@ Route::get('/test-auth', function () {
     return 'Connecté en tant que: ' . auth()->user()->name . ' (Rôle: ' . auth()->user()->role . ')';
 });
 
-Route::resource('stands', StandController::class);
-Route::resource('produits', ProduitController::class);
-Route::resource('commandes', CommandeController::class);
+// Application du middleware d'authentification uniquement
+Route::middleware(['auth'])->group(function () {
+    Route::resource('stands', StandController::class);
+    Route::resource('produits', ProduitController::class);
+    Route::resource('commandes', CommandeController::class);
+    // Ajoute ici d'autres routes privées si besoin
+});
+
+// Application du middleware pour bloquer les entrepreneurs en attente
+Route::middleware(['auth', 'entrepreneur.approuve'])->group(function () {
+    // Ajoute ici d'autres routes privées si besoin
+});
 
 // Route pour mettre à jour le statut d'une commande
 Route::patch('/commandes/{commande}/statut', [CommandeController::class, 'updateStatut'])->name('commandes.update-statut');
@@ -73,6 +83,35 @@ Route::post('/admin/demandes/{id}/statut', function ($id, \Illuminate\Http\Reque
     }
     return app(\App\Http\Controllers\AdminUserController::class)->updateStatut($request, $id);
 })->middleware('auth')->name('admin.demandes.update');
+
+// Gestion des commandes par l'admin
+Route::get('/admin/commandes', function () {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->index(request());
+})->middleware('auth')->name('admin.commandes');
+
+Route::get('/admin/commandes/{commande}', function ($commande) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->show($commande);
+})->middleware('auth')->name('admin.commandes.show');
+
+Route::patch('/admin/commandes/{commande}/statut', function ($commande, \Illuminate\Http\Request $request) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->updateStatus($request, $commande);
+})->middleware('auth')->name('admin.commandes.update-status');
+
+Route::get('/admin/commandes/export', function (\Illuminate\Http\Request $request) {
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+    return app(\App\Http\Controllers\AdminCommandeController::class)->export($request);
+})->middleware('auth')->name('admin.commandes.export');
 
 // Routes publiques (accessibles à tous)
 Route::prefix('public')->group(function () {
@@ -106,5 +145,10 @@ Route::prefix('orders')->group(function () {
     Route::get('/history', [App\Http\Controllers\PublicOrderController::class, 'history'])->name('orders.history');
     Route::get('/{id}', [App\Http\Controllers\PublicOrderController::class, 'show'])->name('orders.show');
 });
+
+// Page d'information pour les entrepreneurs en attente
+Route::get('/statut-demande', function () {
+    return view('statut-demande');
+})->middleware('auth')->name('statut.demande');
 
 require __DIR__.'/auth.php';

@@ -38,7 +38,7 @@
                     <span class="font-medium text-gray-700 dark:text-gray-200">{{ Auth::user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}" style="display:inline; margin-left: 1rem;">
                         @csrf
-                        <button type="submit" class="btn btn-link" style="color: #111; font-weight: bold; background: #fff; border: 1px solid #111; border-radius: 4px; padding: 0.3rem 1rem; cursor: pointer;">Déconnexion</button>
+                        <button type="submit" class="btn btn-link" style="color: #111; font-weight: bold; background: #fff; border: 1px solid #111; border-radius: 4px; padding: 0.3rem 1rem; cursor: pointer;">{{ __('Log Out') }}</button>
                     </form>
                 </div>
             </div>
