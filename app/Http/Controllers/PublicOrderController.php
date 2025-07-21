@@ -186,6 +186,22 @@ class PublicOrderController extends Controller
     }
 
     /**
+     * Retourne l'historique des commandes du participant connecté (API JSON)
+     */
+    public function mesCommandesApi(Request $request)
+    {
+        $user = $request->user();
+        $commandes = \App\Models\Commande::where('email_client', $user->email)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return response()->json([
+            'success' => true,
+            'data' => $commandes
+        ]);
+    }
+
+    /**
      * Affiche les détails d'une commande
      */
     public function show($id)

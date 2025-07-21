@@ -12,23 +12,131 @@
                     <h1 class="text-2xl font-bold mb-6">Administration - {{ Auth::user()->name }}</h1>
                     <p class="mb-8 text-gray-600">Interface d'administration complète</p>
                     
-                    <!-- Statistiques rapides -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                            <h4 class="text-sm font-semibold text-blue-800">Total Stands</h4>
-                            <p class="text-2xl font-bold text-blue-600">{{ \App\Models\Stand::count() }}</p>
+                    <!-- Graphiques (plus petits) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Graphique circulaire (camembert) -->
+                        <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+                            <h3 class="text-base font-semibold mb-2">Répartition des rôles utilisateurs</h3>
+                            <div class="w-[220px] h-[220px]">
+                                <canvas id="rolesChart" width="220" height="220"></canvas>
+                            </div>
                         </div>
-                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                            <h4 class="text-sm font-semibold text-orange-800">Total Produits</h4>
-                            <p class="text-2xl font-bold text-orange-600">{{ \App\Models\Produit::count() }}</p>
+                        <!-- Graphique en courbe (commandes par mois) -->
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h3 class="text-base font-semibold mb-2 text-center">Commandes par mois (12 derniers mois)</h3>
+                            <canvas id="commandesChart" style="width:100%;max-width:100%;height:220px;"></canvas>
                         </div>
-                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                            <h4 class="text-sm font-semibold text-green-800">Total Commandes</h4>
-                            <p class="text-2xl font-bold text-green-600">{{ \App\Models\Commande::count() }}</p>
+                    </div>
+
+                    <!-- Chart.js -->
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script>
+                        // Camembert des rôles
+                        const rolesChart = new Chart(document.getElementById('rolesChart'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: {!! json_encode(array_keys($roles)) !!},
+                                datasets: [{
+                                    data: {!! json_encode(array_values($roles)) !!},
+                                    backgroundColor: [
+                                        '#3b82f6', '#22c55e', '#f59e42', '#a78bfa'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                cutout: '70%',
+                                plugins: {
+                                    legend: { position: 'bottom' }
+                                }
+                            }
+                        });
+
+                        // Courbe des commandes par mois
+                        const commandesChart = new Chart(document.getElementById('commandesChart'), {
+                            type: 'line',
+                            data: {
+                                labels: {!! json_encode($labelsMois) !!},
+                                datasets: [{
+                                    label: 'Commandes',
+                                    data: {!! json_encode($commandesParMois) !!},
+                                    fill: true,
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    tension: 0.3,
+                                    pointRadius: 3,
+                                    pointBackgroundColor: '#3b82f6'
+                                }]
+                            },
+                            options: {
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                elements: {
+                                    line: { borderWidth: 2 },
+                                    point: { radius: 3 }
+                                }
+                            }
+                        });
+                    </script>
+
+                    <!-- Dernières demandes d'entrepreneurs en attente -->
+                    <div class="mt-8 mb-8">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-4">Dernières demandes d'entrepreneurs en attente</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white rounded-lg shadow">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2">Nom</th>
+                                        <th class="px-4 py-2">Entreprise</th>
+                                        <th class="px-4 py-2">Email</th>
+                                        <th class="px-4 py-2">Date d'inscription</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($dernieresDemandes as $demande)
+                                        <tr class="border-t">
+                                            <td class="px-4 py-2">{{ $demande->name }}</td>
+                                            <td class="px-4 py-2">{{ $demande->nom_entreprise }}</td>
+                                            <td class="px-4 py-2">{{ $demande->email }}</td>
+                                            <td class="px-4 py-2">{{ $demande->created_at->format('d/m/Y H:i') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="4" class="px-4 py-2 text-center text-gray-500">Aucune demande récente</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                            <h4 class="text-sm font-semibold text-purple-800">Utilisateurs</h4>
-                            <p class="text-2xl font-bold text-purple-600">{{ \App\Models\User::count() }}</p>
+                    </div>
+
+                    <!-- Dernières commandes -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-green-800 mb-4">Dernières commandes</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white rounded-lg shadow">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2">ID</th>
+                                        <th class="px-4 py-2">Stand</th>
+                                        <th class="px-4 py-2">Client</th>
+                                        <th class="px-4 py-2">Date</th>
+                                        <th class="px-4 py-2">Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($dernieresCommandes as $commande)
+                                        <tr class="border-t">
+                                            <td class="px-4 py-2">{{ $commande->id }}</td>
+                                            <td class="px-4 py-2">{{ optional($commande->stand)->nom_stand ?? '-' }}</td>
+                                            <td class="px-4 py-2">{{ $commande->nom_client ?? ($commande->user->name ?? '-') }}</td>
+                                            <td class="px-4 py-2">{{ $commande->created_at ? $commande->created_at->format('d/m/Y H:i') : '-' }}</td>
+                                            <td class="px-4 py-2">{{ $commande->total_prix ?? $commande->calculerTotal() }} €</td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="5" class="px-4 py-2 text-center text-gray-500">Aucune commande récente</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     
@@ -67,28 +175,6 @@
                         </div>
                     </div>
 
-                    <!-- Actions d'administration -->
-                    <div class="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Actions d'Administration</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200">
-                                <h4 class="font-semibold text-gray-800 mb-2">Gestion des Utilisateurs</h4>
-                                <p class="text-sm text-gray-600 mb-3">Approuver les entrepreneurs, gérer les rôles</p>
-                                <a href="{{ route('admin.demandes') }}" 
-                                   class="inline-flex items-center px-3 py-1 bg-blue-500 hover:bg-blue-700 text-white rounded text-sm transition-colors duration-200">
-                                    Gérer les Demandes
-                                </a>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200">
-                                <h4 class="font-semibold text-gray-800 mb-2">Statistiques Avancées</h4>
-                                <p class="text-sm text-gray-600 mb-3">Rapports détaillés et analyses</p>
-                                <a href="{{ route('admin.commandes') }}" 
-                                   class="inline-flex items-center px-3 py-1 bg-green-500 hover:bg-green-700 text-white rounded text-sm transition-colors duration-200">
-                                    Voir les Statistiques
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

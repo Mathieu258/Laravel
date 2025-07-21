@@ -30,6 +30,10 @@ class AdminUserController extends Controller
         $user = User::findOrFail($id);
         $ancienStatut = $user->statut;
         $user->statut = $request->statut;
+        // Si on approuve, on met aussi à jour le rôle
+        if ($request->statut === 'approuve') {
+            $user->role = 'entrepreneur_approuve';
+        }
         $user->save();
 
         // Envoyer un email de notification

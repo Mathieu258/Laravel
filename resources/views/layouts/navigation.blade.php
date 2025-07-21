@@ -28,6 +28,11 @@
                         <x-nav-link :href="route('commandes.index')" :active="request()->routeIs('commandes.*')">
                             {{ __('Commandes') }}
                         </x-nav-link>
+                        @if(auth()->user()->role === 'admin')
+                            <x-nav-link :href="route('admin.demandes')" :active="request()->routeIs('admin.demandes')">
+                                {{ __('Demandes') }}
+                            </x-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -74,6 +79,11 @@
                 <x-responsive-nav-link :href="route('commandes.index')" :active="request()->routeIs('commandes.*')">
                     {{ __('Commandes') }}
                 </x-responsive-nav-link>
+                @if(auth()->user()->role === 'admin')
+                    <x-responsive-nav-link :href="route('admin.demandes')" :active="request()->routeIs('admin.demandes')">
+                        {{ __('Demandes') }}
+                    </x-responsive-nav-link>
+                @endif
             @endif
         </div>
 

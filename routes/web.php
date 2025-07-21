@@ -62,12 +62,9 @@ Route::get('/api/stands/{stand}/produits', function ($standId, Request $request)
 });
 
 // Routes d'administration protégées par le middleware 'isadmin'
-Route::get('/admin', function () {
-    if (!auth()->check() || auth()->user()->role !== 'admin') {
-        abort(403, 'Accès refusé.');
-    }
-    return view('admin.dashboard');
-})->middleware('auth')->name('admin.dashboard');
+Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index'])
+    ->middleware('auth')
+    ->name('admin.dashboard');
 
 // Gestion des demandes d'entrepreneurs par l'admin
 Route::get('/admin/demandes', function () {
@@ -152,3 +149,5 @@ Route::get('/statut-demande', function () {
 })->middleware('auth')->name('statut.demande');
 
 require __DIR__.'/auth.php';
+
+Route::middleware(['auth'])->get('/api/mes-commandes', [App\Http\Controllers\PublicOrderController::class, 'mesCommandesApi']);
