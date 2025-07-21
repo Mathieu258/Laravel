@@ -40,9 +40,18 @@ Route::get('/test-auth', function () {
     return 'Connecté en tant que: ' . auth()->user()->name . ' (Rôle: ' . auth()->user()->role . ')';
 });
 
-Route::resource('stands', StandController::class);
-Route::resource('produits', ProduitController::class);
-Route::resource('commandes', CommandeController::class);
+// Application du middleware d'authentification uniquement
+Route::middleware(['auth'])->group(function () {
+    Route::resource('stands', StandController::class);
+    Route::resource('produits', ProduitController::class);
+    Route::resource('commandes', CommandeController::class);
+    // Ajoute ici d'autres routes privées si besoin
+});
+
+// Application du middleware pour bloquer les entrepreneurs en attente
+Route::middleware(['auth', 'entrepreneur.approuve'])->group(function () {
+    // Ajoute ici d'autres routes privées si besoin
+});
 
 // Route pour mettre à jour le statut d'une commande
 Route::patch('/commandes/{commande}/statut', [CommandeController::class, 'updateStatut'])->name('commandes.update-statut');
@@ -136,5 +145,10 @@ Route::prefix('orders')->group(function () {
     Route::get('/history', [App\Http\Controllers\PublicOrderController::class, 'history'])->name('orders.history');
     Route::get('/{id}', [App\Http\Controllers\PublicOrderController::class, 'show'])->name('orders.show');
 });
+
+// Page d'information pour les entrepreneurs en attente
+Route::get('/statut-demande', function () {
+    return view('statut-demande');
+})->middleware('auth')->name('statut.demande');
 
 require __DIR__.'/auth.php';

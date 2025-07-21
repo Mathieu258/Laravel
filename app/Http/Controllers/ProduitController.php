@@ -53,6 +53,7 @@ class ProduitController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Produit::class);
         $stands = Stand::all();
         return view('produits.create', compact('stands'));
     }
@@ -90,6 +91,7 @@ class ProduitController extends Controller
      */
     public function show(Produit $produit)
     {
+        $this->authorize('view', $produit);
         return view('produits.show', compact('produit'));
     }
 
@@ -98,6 +100,7 @@ class ProduitController extends Controller
      */
     public function edit(Produit $produit)
     {
+        $this->authorize('update', $produit);
         $stands = Stand::all();
         return view('produits.edit', compact('produit', 'stands'));
     }
@@ -107,6 +110,7 @@ class ProduitController extends Controller
      */
     public function update(Request $request, Produit $produit)
     {
+        $this->authorize('update', $produit);
         $request->validate([
             'nom' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -140,6 +144,7 @@ class ProduitController extends Controller
      */
     public function destroy(Produit $produit)
     {
+        $this->authorize('delete', $produit);
         $produit->delete();
 
         return redirect()->route('produits.index')

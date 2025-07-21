@@ -58,6 +58,7 @@ class CommandeController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Commande::class);
         $stands = Stand::all();
         $produits = Produit::with('stand')->get();
         
@@ -120,6 +121,7 @@ class CommandeController extends Controller
      */
     public function show(Commande $commande)
     {
+        $this->authorize('view', $commande);
         // Décoder les détails de la commande
         $details = is_string($commande->details_commande)
             ? json_decode($commande->details_commande, true)
@@ -150,13 +152,7 @@ class CommandeController extends Controller
      */
     public function edit(Commande $commande)
     {
-        // Vérifier les permissions
-        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
-            if ($commande->stand->user_id !== auth()->id()) {
-                abort(403, 'Accès refusé.');
-            }
-        }
-
+        $this->authorize('update', $commande);
         $stands = Stand::all();
         $produits = Produit::with('stand')->get();
         $commande->load(['stand', 'user']);
@@ -172,13 +168,7 @@ class CommandeController extends Controller
      */
     public function update(Request $request, Commande $commande)
     {
-        // Vérifier les permissions
-        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
-            if ($commande->stand->user_id !== auth()->id()) {
-                abort(403, 'Accès refusé.');
-            }
-        }
-
+        $this->authorize('update', $commande);
         $request->validate([
             'stand_id' => 'required|exists:stands,id',
             'details_commande' => 'required|array',
@@ -217,13 +207,7 @@ class CommandeController extends Controller
      */
     public function destroy(Commande $commande)
     {
-        // Vérifier les permissions
-        if (auth()->user()->role === 'entrepreneur' && auth()->user()->statut === 'approuve') {
-            if ($commande->stand->user_id !== auth()->id()) {
-                abort(403, 'Accès refusé.');
-            }
-        }
-
+        $this->authorize('delete', $commande);
         try {
             $commande->delete();
             return redirect()->route('commandes.index')

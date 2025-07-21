@@ -40,6 +40,7 @@ class StandController extends Controller
     // Affiche le formulaire de création
     public function create()
     {
+        $this->authorize('create', Stand::class);
         return view('stands.create');
     }
 
@@ -61,18 +62,21 @@ class StandController extends Controller
     // Affiche le détail d'un stand
     public function show(Stand $stand)
     {
+        $this->authorize('view', $stand);
         return view('stands.show', compact('stand'));
     }
 
     // Affiche le formulaire d'édition
     public function edit(Stand $stand)
     {
+        $this->authorize('update', $stand);
         return view('stands.edit', compact('stand'));
     }
 
     // Met à jour un stand
     public function update(Request $request, Stand $stand)
     {
+        $this->authorize('update', $stand);
         $request->validate([
             'nom_stand' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -84,6 +88,7 @@ class StandController extends Controller
     // Supprime un stand
     public function destroy(Stand $stand)
     {
+        $this->authorize('delete', $stand);
         $stand->delete();
         return redirect()->route('stands.index')->with('success', 'Stand supprimé avec succès.');
     }

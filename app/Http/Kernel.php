@@ -44,5 +44,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        // Ajout du middleware pour les entrepreneurs en attente
+        'entrepreneur.approuve' => \App\Http\Middleware\CheckEntrepreneurApproved::class,
     ];
 }
