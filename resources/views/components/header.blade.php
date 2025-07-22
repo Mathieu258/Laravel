@@ -26,11 +26,10 @@
                 </li>
             </ul>
             <ul class="nav-right">
-                @auth
                 <li class="user-profile header-notification">
                     <a href="#!">
                         <img src="{{ asset('assets/images/avatar-4.jpg') }}" class="img-radius" alt="User-Profile-Image">
-                        <span>{{ Auth::user()->name }}</span>
+                        <span>John Doe</span>
                         <i class="ti-angle-down"></i>
                     </a>
                     <ul class="show-notification profile-notification">
@@ -44,8 +43,6 @@
                         </li>
                     </ul>
                 </li>
-                @endauth
-                @guest
                 <li>
                     <a href="{{ route('login') }}">
                         <i class="ti-user"></i> Se connecter
@@ -56,7 +53,6 @@
                         <i class="ti-pencil-alt"></i> S'inscrire
                     </a>
                 </li>
-                @endguest
                 <li>
                     <a href="{{ route('cart.index') }}">
                         <i class="ti-shopping-cart"></i> Panier

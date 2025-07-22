@@ -20,24 +20,21 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+        $role = 'admin'; // contractor_approved, contractor_pending
 
-            if ($user->role === 'admin') {
-                return redirect()->intended('/admin/dashboard');
-            } elseif ($user->role === 'contractor_approved') {
-                return redirect()->intended('/entrepreneur/dashboard');
-            } elseif ($user->role === 'contractor_pending') {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'Votre compte est en attente d\'approbation.',
-                ]);
-            } else {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'Accès non autorisé.',
-                ]);
-            }
+        if ($role === 'admin') {
+
+            return redirect()->intended('/admin/dashboard');
+        } elseif ($role === 'contractor_approved') {
+            return redirect()->intended('/entrepreneur/dashboard');
+        } elseif ($role === 'contractor_pending') {
+            return back()->withErrors([
+                'email' => 'Votre compte est en attente d\'approbation.',
+            ]);
+        } else {
+            return back()->withErrors([
+                'email' => 'Accès non autorisé.',
+            ]);
         }
 
         return back()->withErrors([
@@ -47,7 +44,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        // Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');

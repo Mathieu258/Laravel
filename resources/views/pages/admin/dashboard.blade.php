@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1>Tableau de bord de l'administrateur</h1>
-    <p>Bienvenue, {{ Auth::user()->name }}!</p>
+    <p>Bienvenue, John Doe!</p>
 
     <div class="card">
         <div class="card-header">
@@ -25,28 +25,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($pendingRequests as $request)
-                        <tr>
-                            <td>{{ $request->company_name }}</td>
-                            <td>{{ $request->name }}</td>
-                            <td>{{ $request->email }}</td>
-                            <td>
-                                <form action="{{ route('admin.approve', $request) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success">Approuver</button>
-                                </form>
-                                <form action="{{ route('admin.reject', $request) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Rejeter</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4">Aucune demande en attente.</td>
-                        </tr>
-                    @endforelse
+                    <tr>
+                        <td>Societe General</td>
+                        <td>John Doe</td>
+                        <td>john@doe.com</td>
+                        <td>
+                            <button class="btn btn-success">Approuver</button>
+                            <button class="btn btn-danger">Rejeter</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

@@ -20,14 +20,14 @@ Route::get('register', [RegisterController::class, 'showRegistrationForm'])->nam
 Route::post('register', [RegisterController::class, 'register']);
 
 // Admin Routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('approve/{user}', [AdminController::class, 'approve'])->name('approve');
     Route::delete('reject/{user}', [AdminController::class, 'reject'])->name('reject');
 });
 
 // Entrepreneur Routes
-Route::middleware(['auth', 'role:contractor_approved'])->prefix('entrepreneur')->name('entrepreneur.')->group(function () {
+Route::prefix('entrepreneur')->name('entrepreneur.')->group(function () {
     Route::get('dashboard', [EntrepreneurController::class, 'dashboard'])->name('dashboard');
     Route::get('products', [EntrepreneurController::class, 'products'])->name('products');
     Route::get('products/create', [EntrepreneurController::class, 'createProduct'])->name('products.create');

@@ -26,30 +26,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($products as $product)
-                        <tr>
-                            <td>
-                                @if($product->image_url)
-                                    <img src="{{ asset('images/' . $product->image_url) }}" alt="{{ $product->name }}" width="100">
-                                @endif
-                            </td>
-                            <td>{{ $product->name }}</td>
-                            <td>{{ $product->description }}</td>
-                            <td>{{ $product->price }} €</td>
-                            <td>
-                                <a href="{{ route('entrepreneur.products.edit', $product) }}" class="btn btn-warning">Modifier</a>
-                                <form action="{{ route('entrepreneur.products.delete', $product) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Supprimer</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5">Vous n'avez aucun produit.</td>
-                        </tr>
-                    @endforelse
+                    <tr>
+                        <td>
+                            <img src="{{ asset('images/1753008821.jpg') }}" alt="Image" width="100">
+                        </td>
+                        <td>Produit 1</td>
+                        <td>Description du produit</td>
+                        <td>1000 XOF</td>
+                        <td>
+                            <a href="{{ route('entrepreneur.products.edit', 1) }}" class="btn btn-warning">Modifier</a>
+                            <button class="btn btn-danger">Supprimer</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

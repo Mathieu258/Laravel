@@ -5,21 +5,24 @@
     <h1>Nos exposants</h1>
 
     <div class="row">
-        @forelse ($stands as $stand)
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $stand->stand_name }}</h5>
-                        <p class="card-text">{{ $stand->description }}</p>
-                        <a href="{{ route('stand', $stand) }}" class="btn btn-primary">Voir le stand</a>
-                    </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Stand 1</h5>
+                    <p class="card-text">Stad description</p>
+                    <a href="{{ route('stand', 1) }}" class="btn btn-primary">Voir le stand</a>
                 </div>
             </div>
-        @empty
-            <div class="col">
-                <p>Il n'y a aucun exposant pour le moment.</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Stand 2</h5>
+                    <p class="card-text">Stad description</p>
+                    <a href="{{ route('stand', 1) }}" class="btn btn-primary">Voir le stand</a>
+                </div>
             </div>
-        @endforelse
+        </div>
     </div>
 </div>
 @endsection

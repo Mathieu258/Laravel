@@ -6,7 +6,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('entrepreneur.products.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="#" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label for="name">Nom du produit</label>
