@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -19,10 +20,18 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+ develop
         'company_name',
         'email',
         'password',
         'role',
+
+        'nom_entreprise', // Ajouté
+        'email',
+        'password',
+        'role', // Ajouté
+        'statut',
+ master
     ];
 
     /**
@@ -46,5 +55,51 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relation avec les stands
+     */
+    public function stands(): HasMany
+    {
+        return $this->hasMany(Stand::class);
+    }
+
+    /**
+     * Relation avec les commandes
+     */
+    public function commandes(): HasMany
+    {
+        return $this->hasMany(Commande::class);
+    }
+
+    // Méthodes de vérification de rôle
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isEntrepreneur()
+    {
+        return $this->role === 'entrepreneur_approuve';
+    }
+
+    public function isEnAttente()
+    {
+        return $this->role === 'entrepreneur_en_attente';
+    }
+
+    public function isParticipant()
+    {
+        return $this->role === 'participant';
+    }
+
+    public function can($ability, $arguments = [])
+    {
+        if ($ability === 'admin') {
+            return $this->role === 'admin';
+        }
+        
+        return false;
     }
 }

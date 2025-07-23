@@ -1,3 +1,14 @@
+# Eat&Drink - Backend Laravel
+
+Ce projet est le backend de la plateforme Eat&Drink, permettant la gestion des exposants, des stands, des produits et des commandes pour un événement culinaire. Il inclut :
+- Authentification et gestion des rôles (admin, entrepreneur, participant)
+- Sécurisation des accès (policies, middleware)
+- Validation des formulaires et messages d’erreur en français
+- Documentation des routes backend (voir ci-dessous)
+- Notifications email (log)
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -59,3 +70,74 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# Documentation API Backend
+
+## Authentification
+
+| Méthode | URL           | Description                | Rôle(s)         |
+|---------|---------------|----------------------------|-----------------|
+| POST    | /login        | Connexion                  | Tous            |
+| POST    | /register     | Inscription entrepreneur   | Public          |
+| POST    | /logout       | Déconnexion                | Authentifié     |
+
+## Gestion des Stands
+
+| Méthode | URL                | Description                        | Rôle(s)                | Paramètres attendus                |
+|---------|--------------------|------------------------------------|------------------------|------------------------------------|
+| GET     | /stands            | Liste des stands (perso/admin)     | Admin, Entrepreneur    | -                                  |
+| GET     | /stands/create     | Formulaire création stand          | Admin, Entrepreneur    | -                                  |
+| POST    | /stands            | Créer un stand                     | Admin, Entrepreneur    | nom_stand, description             |
+| GET     | /stands/{id}       | Détail d'un stand                  | Admin, Entrepreneur    | -                                  |
+| GET     | /stands/{id}/edit  | Formulaire édition stand           | Admin, Entrepreneur    | -                                  |
+| PUT     | /stands/{id}       | Modifier un stand                  | Admin, Entrepreneur    | nom_stand, description             |
+| DELETE  | /stands/{id}       | Supprimer un stand                 | Admin, Entrepreneur    | -                                  |
+
+## Gestion des Produits
+
+| Méthode | URL                   | Description                        | Rôle(s)                | Paramètres attendus                |
+|---------|-----------------------|------------------------------------|------------------------|------------------------------------|
+| GET     | /produits             | Liste des produits                 | Admin, Entrepreneur    | -                                  |
+| GET     | /produits/create      | Formulaire création produit        | Admin, Entrepreneur    | -                                  |
+| POST    | /produits             | Créer un produit                   | Admin, Entrepreneur    | nom, description, prix, image, stand_id |
+| GET     | /produits/{id}        | Détail d'un produit                | Admin, Entrepreneur    | -                                  |
+| GET     | /produits/{id}/edit   | Formulaire édition produit         | Admin, Entrepreneur    | -                                  |
+| PUT     | /produits/{id}        | Modifier un produit                | Admin, Entrepreneur    | nom, description, prix, image, stand_id |
+| DELETE  | /produits/{id}        | Supprimer un produit               | Admin, Entrepreneur    | -                                  |
+
+## Gestion des Commandes
+
+| Méthode | URL                      | Description                        | Rôle(s)                | Paramètres attendus                |
+|---------|--------------------------|------------------------------------|------------------------|------------------------------------|
+| GET     | /commandes               | Liste des commandes                | Admin, Entrepreneur    | -                                  |
+| GET     | /commandes/create        | Formulaire création commande       | Admin, Entrepreneur    | -                                  |
+| POST    | /commandes               | Créer une commande                 | Admin, Entrepreneur    | stand_id, produits[], quantites[]  |
+| GET     | /commandes/{id}          | Détail d'une commande              | Admin, Entrepreneur    | -                                  |
+| GET     | /commandes/{id}/edit     | Formulaire édition commande        | Admin, Entrepreneur    | -                                  |
+| PUT     | /commandes/{id}          | Modifier une commande              | Admin, Entrepreneur    | détails_commande, statut, notes    |
+| DELETE  | /commandes/{id}          | Supprimer une commande             | Admin, Entrepreneur    | -                                  |
+
+## Gestion des demandes d'entrepreneurs (Admin)
+
+| Méthode | URL                        | Description                        | Rôle(s)      | Paramètres attendus                |
+|---------|----------------------------|------------------------------------|--------------|------------------------------------|
+| GET     | /admin/demandes            | Liste des demandes en attente      | Admin        | -                                  |
+| POST    | /admin/demandes/{id}/statut| Approuver/Rejeter une demande     | Admin        | statut (approuve/rejete), motif    |
+
+## Vitrine publique & commandes visiteurs
+
+| Méthode | URL                        | Description                        | Rôle(s)      | Paramètres attendus                |
+|---------|----------------------------|------------------------------------|--------------|------------------------------------|
+| GET     | /public/stands             | Liste des stands approuvés         | Public       | -                                  |
+| GET     | /public/stands/{id}        | Détail d'un stand                  | Public       | -                                  |
+| GET     | /public/produits/search    | Recherche de produits              | Public       | search                            |
+| GET     | /public/stats              | Statistiques publiques             | Public       | -                                  |
+
+## Statuts et rôles
+
+- **Rôles** : admin, entrepreneur (en_attente, approuve), participant (public)
+- **Statuts de commande** : en_attente, confirmee, en_preparation, livree, annulee
+
+---
+
+**Pour toute question sur un endpoint, voir le contrôleur correspondant dans `app/Http/Controllers/`**
